@@ -120,15 +120,15 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GaleriaFotosApp() {
-    // Sustituye los recursos R.drawable.foto_X por tus 6 (o más) imágenes en res/drawable
+    // Imágenes incorporadas en res/drawable desde "fotos moviles"
     val fotos = remember {
         listOf(
-            FotoGaleria(android.R.drawable.ic_menu_gallery, "Amanecer en la ciudad", 2021),
-            FotoGaleria(android.R.drawable.ic_menu_camera, "Reflejos del puerto", 2022),
-            FotoGaleria(android.R.drawable.ic_menu_compass, "Sendero de montaña", 2023),
-            FotoGaleria(android.R.drawable.ic_menu_mapmode, "Plaza histórica", 2020),
-            FotoGaleria(android.R.drawable.ic_menu_myplaces, "Luz de otoño", 2024),
-            FotoGaleria(android.R.drawable.ic_menu_view, "Horizonte marino", 2025)
+            FotoGaleria(R.drawable.calajo, "Calajo, el gato elegante", 2021),
+            FotoGaleria(R.drawable.hamsterhappy, "Hamster arcoíris", 2022),
+            FotoGaleria(R.drawable.patricio, "Patricio soñador", 2023),
+            FotoGaleria(R.drawable.placton, "Plankton melancólico", 2020),
+            FotoGaleria(R.drawable.po, "El guerrero drogón", 2024),
+            FotoGaleria(R.drawable.reyjulien, "Mauricio no se mueve", 2025)
         )
     }
 
