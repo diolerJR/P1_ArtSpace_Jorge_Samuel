@@ -149,14 +149,15 @@ fun GaleriaFotosApp() {
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp >= 600
     val maxContentWidth = if (isTablet) 720.dp else 480.dp
-    val imageHeight = if (isTablet) 420.dp else 280.dp
+    val imageHeight = if (isTablet) 420.dp else 380.dp
     val outerPadding = if (isTablet) 28.dp else 16.dp
+    val imagePadding = if (isTablet) 12.dp else 8.dp
 
-    // En móvil la imagen queda centrada verticalmente y el resto va debajo
+    // En móvil la imagen queda centrada en el área disponible sobre los botones
     val espacioSuperior = if (isTablet) {
         0.dp
     } else {
-        ((configuration.screenHeightDp - imageHeight.value) / 2f - 130f)
+        ((configuration.screenHeightDp - 110f - imageHeight.value) / 2f - 78f)
             .coerceAtLeast(0f).dp
     }
     val espacioInferior = if (isTablet) 20.dp else 32.dp
@@ -167,141 +168,147 @@ fun GaleriaFotosApp() {
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .verticalScroll(scrollState)
             .padding(outerPadding),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .widthIn(max = maxContentWidth),
+                .weight(1f)
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 1. Barra de título
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
-                    .padding(top = 8.dp)
-            ) {
-                Text(
-                    text = "GALERIA Jorge y Samuel",
-                    style = if (isTablet) {
-                        MaterialTheme.typography.headlineMedium
-                    } else {
-                        MaterialTheme.typography.titleLarge
-                    },
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                )
-                HorizontalDivider(
-                    thickness = 2.dp,
-                    color = MaterialTheme.colorScheme.secondary
-                )
-            }
-
-            Spacer(modifier = Modifier.height(espacioSuperior))
-
-            // 2. Galería fotográfica
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(imageHeight)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Image(
-                    painter = painterResource(id = fotoActual.imageRes),
-                    contentDescription = "${fotoActual.titulo} (${fotoActual.anio})",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(4.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(espacioInferior))
-
-            // 3. Título de la foto y 4. numero de imagen
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
+                    .widthIn(max = maxContentWidth),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    text = "${fotoActual.titulo} (${fotoActual.anio})",
-                    style = if (isTablet) {
-                        MaterialTheme.typography.headlineSmall
-                    } else {
-                        MaterialTheme.typography.titleMedium
-                    },
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = "Imagen ${indiceActual + 1}/$totalFotos",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
-                    textAlign = TextAlign.Center
-                )
-            }
-
-            Spacer(modifier = Modifier.height(espacioInferior))
-
-            // 5. Botones: Primera, Anterior, Siguiente, Última
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surface)
-                    .border(
-                        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
-                        shape = RoundedCornerShape(8.dp)
+                // 1. Barra de título
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .padding(top = 8.dp)
+                ) {
+                    Text(
+                        text = "GALERIA Jorge y Samuel",
+                        style = if (isTablet) {
+                            MaterialTheme.typography.headlineMedium
+                        } else {
+                            MaterialTheme.typography.titleLarge
+                        },
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
                     )
-                    .padding(12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                if (isTablet) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BotonGaleria("Primera", irPrimera)
-                        BotonGaleria("Anterior", irAnterior)
-                        BotonGaleria("Siguiente", irSiguiente)
-                        BotonGaleria("Última", irUltima)
-                    }
-                } else {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        BotonGaleria("Primera", irPrimera, Modifier.weight(1f), compact = true)
-                        BotonGaleria("Anterior", irAnterior, Modifier.weight(1f), compact = true)
-                        BotonGaleria("Siguiente", irSiguiente, Modifier.weight(1f), compact = true)
-                        BotonGaleria("Última", irUltima, Modifier.weight(1f), compact = true)
-                    }
+                    HorizontalDivider(
+                        thickness = 2.dp,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(espacioSuperior))
+
+                // 2. Galería fotográfica
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(imageHeight)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(
+                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(imagePadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(id = fotoActual.imageRes),
+                        contentDescription = "${fotoActual.titulo} (${fotoActual.anio})",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(4.dp))
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(espacioInferior))
+
+                // 3. Título de la foto y 4. numero de imagen
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(
+                            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 16.dp, vertical = 14.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "${fotoActual.titulo} (${fotoActual.anio})",
+                        style = if (isTablet) {
+                            MaterialTheme.typography.headlineSmall
+                        } else {
+                            MaterialTheme.typography.titleMedium
+                        },
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = "Imagen ${indiceActual + 1}/$totalFotos",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+        // 5. Botones fijos en la parte inferior de la pantalla
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = maxContentWidth)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.surface)
+                .border(
+                    border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(12.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isTablet) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BotonGaleria("Primera", irPrimera)
+                    BotonGaleria("Anterior", irAnterior)
+                    BotonGaleria("Siguiente", irSiguiente)
+                    BotonGaleria("Última", irUltima)
+                }
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BotonGaleria("Primera", irPrimera, Modifier.weight(1f), compact = true)
+                    BotonGaleria("Anterior", irAnterior, Modifier.weight(1f), compact = true)
+                    BotonGaleria("Siguiente", irSiguiente, Modifier.weight(1f), compact = true)
+                    BotonGaleria("Última", irUltima, Modifier.weight(1f), compact = true)
                 }
             }
         }
