@@ -20,8 +20,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -117,7 +116,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GaleriaFotosApp() {
     // Imágenes incorporadas en res/drawable desde "fotos moviles"
@@ -148,11 +146,20 @@ fun GaleriaFotosApp() {
     }
 
     // Adaptación móvil / tablet según ancho de pantalla
-    val screenWidthDp = LocalConfiguration.current.screenWidthDp
-    val isTablet = screenWidthDp >= 600
+    val configuration = LocalConfiguration.current
+    val isTablet = configuration.screenWidthDp >= 600
     val maxContentWidth = if (isTablet) 720.dp else 480.dp
     val imageHeight = if (isTablet) 420.dp else 280.dp
     val outerPadding = if (isTablet) 28.dp else 16.dp
+
+    // En móvil la imagen queda centrada verticalmente y el resto va debajo
+    val espacioSuperior = if (isTablet) {
+        0.dp
+    } else {
+        ((configuration.screenHeightDp - imageHeight.value) / 2f - 130f)
+            .coerceAtLeast(0f).dp
+    }
+    val espacioInferior = if (isTablet) 20.dp else 32.dp
 
     val scrollState = rememberScrollState()
 
@@ -197,7 +204,7 @@ fun GaleriaFotosApp() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(espacioSuperior))
 
             // 2. Galería fotográfica
             Box(
@@ -223,7 +230,7 @@ fun GaleriaFotosApp() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(espacioInferior))
 
             // 3. Título de la foto y 4. numero de imagen
             Column(
@@ -258,7 +265,7 @@ fun GaleriaFotosApp() {
                 )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(espacioInferior))
 
             // 5. Botones: Primera, Anterior, Siguiente, Última
             Box(
@@ -285,15 +292,15 @@ fun GaleriaFotosApp() {
                         BotonGaleria("Última", irUltima)
                     }
                 } else {
-                    FlowRow(
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        BotonGaleria("Primera", irPrimera)
-                        BotonGaleria("Anterior", irAnterior)
-                        BotonGaleria("Siguiente", irSiguiente)
-                        BotonGaleria("Última", irUltima)
+                        BotonGaleria("Primera", irPrimera, Modifier.weight(1f), compact = true)
+                        BotonGaleria("Anterior", irAnterior, Modifier.weight(1f), compact = true)
+                        BotonGaleria("Siguiente", irSiguiente, Modifier.weight(1f), compact = true)
+                        BotonGaleria("Última", irUltima, Modifier.weight(1f), compact = true)
                     }
                 }
             }
@@ -304,11 +311,19 @@ fun GaleriaFotosApp() {
 @Composable
 private fun BotonGaleria(
     texto: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    compact: Boolean = false
 ) {
     Button(
         onClick = onClick,
+        modifier = modifier,
         shape = RoundedCornerShape(8.dp),
+        contentPadding = if (compact) {
+            PaddingValues(horizontal = 4.dp, vertical = 10.dp)
+        } else {
+            ButtonDefaults.ContentPadding
+        },
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary
@@ -316,7 +331,11 @@ private fun BotonGaleria(
     ) {
         Text(
             text = texto,
-            style = MaterialTheme.typography.labelLarge,
+            style = if (compact) {
+                MaterialTheme.typography.labelSmall
+            } else {
+                MaterialTheme.typography.labelLarge
+            },
             maxLines = 1
         )
     }
