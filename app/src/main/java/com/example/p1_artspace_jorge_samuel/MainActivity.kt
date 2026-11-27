@@ -216,7 +216,7 @@ fun GaleriaFotosApp() {
                 Image(
                     painter = painterResource(id = fotoActual.imageRes),
                     contentDescription = "${fotoActual.titulo} (${fotoActual.anio})",
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
                         .clip(RoundedCornerShape(4.dp))
