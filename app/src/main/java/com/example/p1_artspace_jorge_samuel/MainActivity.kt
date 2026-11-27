@@ -149,8 +149,8 @@ fun GaleriaFotosApp() {
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp >= 600
     val maxContentWidth = if (isTablet) 720.dp else 480.dp
-    val imageHeight = if (isTablet) 420.dp else 380.dp
-    val outerPadding = if (isTablet) 28.dp else 16.dp
+    val imageHeight = 420.dp
+    val outerPadding = if (isTablet) 28.dp else 8.dp
     val imagePadding = if (isTablet) 12.dp else 8.dp
 
     // En móvil la imagen queda centrada en el área disponible sobre los botones
